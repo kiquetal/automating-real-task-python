@@ -16,6 +16,7 @@ def process_data(data):
     item_price = locale.atof(item["price"].strip("$"))
     item_revenue = item["total_sales"] * item_price
     car = item["car"]
+    all_cars.append([item["id"],format_car(car),f"${item_price}",item["total_sales"]])
 
     if item_revenue > max_revenue["revenue"]:
       item["revenue"] = item_revenue
@@ -54,4 +55,24 @@ def process_data(data):
     "The {} had the most sales: ${}".format(global_car['model'],global_sales),
   ]
   return summary
+
+def main():
+      data = load_data("car_sales.json")
+  summary = process_data(data)
+  print(summary)
+  # TODO: turn this into a PDF report
+  all_cars.insert(0,['ID','Car','Price','Total Sales'])
+  formated = ""
+  for_email = ""
+  for s in summary:
+    formated = formated + s + "\n"
+    for_email = for_email + s + "<br/>"
+
+  reports.generate("/tmp/cars.pdf", "Sales summart for the last month", for_email, all_cars)
+  sender = "automation@example.com"
+  receiver = "{}@example.com".format(os.environ.get('USER'))
+  subject = "Sales summary for last month"
+  body = formated
+  message = emails.generate(sender, receiver, subject, body, "/tmp/cars.pdf")
+  emails.send(message)
 
