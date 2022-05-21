@@ -12,6 +12,6 @@ for f in files:
         feedbacks.append({"title":lines[0],"name":lines[1],"date":lines[2],"feedback":lines[3]})
 
 for feedback in feedbacks:
-    response = requests.post("http://34.132.98.211/feedback/",data=feedback)
+    response = requests.post("http://34.132.98.211/feedback/",json=feedback)
     response.raise_for_status()
 
